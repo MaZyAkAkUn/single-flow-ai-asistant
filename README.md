@@ -1,43 +1,51 @@
-# Personal Assistant v0.2.0
+# Personal Assistant v0.3.0
 
-A single-flow personal assistant application built with PyQt6 and LangChain, featuring plain settings management, vector search, memory integration, and cross-platform support.
+A single-flow personal assistant application built with PyQt6 and LangChain, featuring advanced conversation management, multi-provider LLM support, vector search, memory integration, web search tools, and cross-platform support.
 
 ## 🚀 Key Features
 
 ### Core Functionality ✅
-- **Single Conversation Flow**: Continuous chat interface with persistent context
-- **Multi-LLM Support**: OpenRouter integration with provider switching
-- **Vector Search & Retrieval**: Chat-with-files using FAISS/Chroma vector stores
-- **Memory System**: Long-term memory with Memori SDK integration
-- **Audio Processing**: TTS/ASR with provider abstraction
-- **Plain Settings**: Simple JSON-based configuration storage
+- **Single Conversation Flow**: Continuous chat interface with persistent context and topic tracking
+- **Multi-LLM Support**: OpenRouter integration with provider switching and model combos
+- **Vector Search & Retrieval**: Chat-with-files using FAISS/Chroma vector stores with hybrid search
+- **Memory System**: Long-term memory with Memori SDK integration and episodic/semantic memory
+- **Web Search Tools**: Integrated Tavily, Exa, and Jina search with automatic image galleries
+- **Audio Processing**: TTS/ASR with provider abstraction and streaming playback
+- **Topic Detection**: Automatic conversation topic tracking and context management
+- **Tool Sets**: Configurable tool collections for different use cases
+- **Draft Management**: Save and manage message drafts across sessions
+- **Plain Settings**: Simple JSON-based configuration with secure API key management
 
 ### Technical Highlights ✅
-- **Async Processing**: Non-blocking UI with proper threading
-- **Modular Architecture**: Clean separation of UI, core logic, and providers
-- **Cross-Platform**: Windows, Linux, and macOS support
-- **Comprehensive Testing**: Unit tests with pytest
-- **Packaging Ready**: PyInstaller build scripts for distribution
+- **Async Processing**: Non-blocking UI with proper threading and streaming responses
+- **Modular Architecture**: Clean separation of UI, core logic, providers, and tools
+- **Advanced Prompt Engineering**: Structured prompts with XML tags, memory injection, and context retrieval
+- **Image Processing**: Automatic thumbnail generation and gallery display for web search results
+- **Cross-Platform**: Windows, Linux, and macOS support with PyInstaller packaging
+- **Comprehensive Testing**: Unit tests with pytest and Qt testing integration
+- **Tool Integration**: Extensible tool system with web search, custom tools, and provider management
 
 ## 🏗️ Architecture
 
 ```
 personal_assistant/
 ├── src/
-│   ├── ui/                    # PyQt6 UI components
+│   ├── ui/                    # PyQt6 UI components with WebEngine integration
 │   ├── core/                  # Business logic and orchestration
 │   │   ├── controller.py      # AI Controller (central orchestrator)
-│   │   ├── prompt_builder.py  # Prompt composition logic
-│   │   ├── memory_adapter.py  # Memori integration
-│   │   ├── vector_manager.py  # Vector store management
-│   │   ├── file_ingestor.py   # File parsing and ingestion
+│   │   ├── prompt_builder.py  # Advanced structured prompt composition
+│   │   ├── memory_adapter.py  # Memori integration with memory types
+│   │   ├── vector_manager.py  # Vector store management with hybrid search
+│   │   ├── file_ingestor.py   # Multi-format file parsing and ingestion
 │   │   ├── audio_provider.py  # TTS/ASR provider abstraction
-│   │   └── settings.py        # Secure settings management
-│   ├── langchain_adapters/    # LangChain provider wrappers
-│   └── storage/               # Data persistence layer (planned)
+│   │   ├── topic_tracker.py   # Conversation topic detection middleware
+│   │   ├── project_manager.py # Project context management framework
+│   │   └── settings.py        # Configuration and secure settings management
+│   ├── langchain_adapters/    # LangChain provider wrappers with tool integration
+│   └── storage/               # Data persistence layer (SQLite planned)
 ├── tests/                     # Unit and integration tests
-├── packaging/                 # Build configurations
-└── docs/                      # Documentation (planned)
+├── packaging/                 # Build configurations and PyInstaller scripts
+└── docs/                      # Documentation and implementation plans
 ```
 
 ## 🔧 Installation
@@ -64,20 +72,28 @@ pip install -e .
 
 ### First Run
 1. Launch the application: `python src/main.py`
-2. Configure your API keys in the settings panel
-3. Start chatting!
+2. Configure your API keys in the settings panel (OpenAI, OpenRouter, web search providers)
+3. Set up model combos in the settings for different use cases
+4. Start chatting! The assistant will automatically detect topics and use appropriate tools
 
 ### Key Features
-- **File Upload**: Drag & drop files for vector search
-- **Voice Input**: Click microphone for speech-to-text
-- **Memory Management**: View and manage conversation memories
-- **Settings**: Configure LLM providers, audio settings, and more
+- **File Upload**: Drag & drop files for vector search integration
+- **Voice Input**: Click microphone for speech-to-text with real-time feedback
+- **Web Search**: Ask questions requiring current information - tools activate automatically
+- **Image Galleries**: Web search results with automatic image download and thumbnail generation
+- **Topic Tracking**: Conversations are organized by topics with automatic detection
+- **Memory Management**: View and manage long-term conversation memories
+- **Draft System**: Save message drafts and recover unsent messages across sessions
+- **Model Combos**: Create and switch between different LLM provider/model combinations
+- **Tool Sets**: Configure different tool collections for various tasks
+- **Settings**: Comprehensive configuration for LLM providers, tools, audio, and memory
 
 ## 🔒 Security
 
-- **Plain Storage**: API keys stored in plain JSON format
-- **Local Access**: Settings stored locally on user's machine
-- **User Responsibility**: Users should secure their settings files appropriately
+- **Plain Storage**: API keys stored in plain JSON format (user responsibility for security)
+- **Local Access**: All data stored locally on user's machine
+- **Tool Isolation**: Web search tools use separate API keys with configurable permissions
+- **No Telemetry**: No data collection or external tracking
 
 ## 🧪 Testing
 
@@ -101,63 +117,62 @@ pip install pyinstaller
 pyinstaller --clean --noconfirm packaging/personal_assistant.spec
 ```
 
-## 🔄 Recent Improvements (v0.2.0)
+## 🔄 Recent Improvements (v0.3.0)
 
-### Critical Fixes ✅
-- **Async Processing**: Fixed UI blocking during LLM calls
-- **Settings**: Simplified to plain JSON storage
-- **Testing**: Added comprehensive unit test suite
-- **Packaging**: Created PyInstaller build scripts
+### Major New Features ✅
+- **Topic Detection & Tracking**: Automatic conversation topic identification and context management
+- **Provider/Model Combos**: Create reusable combinations of LLM providers and models for different use cases
+- **Web Search Integration**: Tavily, Exa, and Jina search tools with automatic activation
+- **Image Gallery System**: Automatic image download, thumbnail generation, and gallery display
+- **Tool Sets Management**: Configurable tool collections with web search and custom tools
+- **Draft Management**: Save, edit, and recover message drafts across application restarts
+- **Enhanced Streaming**: Improved response streaming with better error handling
+- **Markdown Rendering**: Beautiful markdown display with syntax highlighting
+- **Project Context Framework**: Foundation for project-based conversation organization
 
 ### Technical Enhancements ✅
-- **PlainSettings Class**: Simple JSON-based configuration storage
-- **Worker Threading**: Proper QThread implementation for async operations
-- **Test Coverage**: 12 unit tests covering core functionality
-- **Build Automation**: Cross-platform packaging scripts
+- **Structured Prompt System**: XML-tagged prompts with memory, context, and tool integration
+- **Advanced Tool Architecture**: Extensible tool system with provider abstraction
+- **Image Processing Pipeline**: Automatic thumbnail generation and local storage
+- **Conversation Persistence**: Robust autosave with drafts and message history
+- **Async Processing Fixes**: Resolved UI blocking issues with proper threading
+- **Error Handling Improvements**: Better error recovery and user feedback
+- **Memory System Integration**: Enhanced Memori SDK integration with multiple memory types
+- **Hybrid Vector Search**: Semantic + keyword search for improved document retrieval
 
 ## 🗺️ Roadmap
 
-### Phase 7a: Critical Fixes ✅ COMPLETE
-- [x] Implement proper async processing in UI
-- [x] Simplify settings to plain JSON storage
-- [x] Fix synchronous LLM calls blocking UI
-- [x] Add proper error handling and user feedback
-- [x] Implement token counting and context truncation
+### Phase 8a: Stability and Polish ✅ MOSTLY COMPLETE
+- [x] Fix streaming response handling and UI blocking
+- [x] Implement topic detection middleware
+- [x] Add provider/model combo system
+- [x] Integrate web search tools with automatic galleries
+- [x] Implement draft management system
+- [x] Add markdown rendering and syntax highlighting
+- [ ] Complete project context management UI
+- [ ] Add conversation export/import functionality
 
-### Phase 7b: Testing Infrastructure ✅ MOSTLY COMPLETE
-- [x] Set up pytest with Qt testing
-- [x] Write unit tests for core components (controller, adapters)
-- [x] Write integration tests for LangChain chains
-- [x] Add mock providers for testing
-- [x] Implement CI/CD test pipeline
+### Phase 8b: Advanced Features 🔄 PLANNED
+- [ ] Email integration (notifications for new emails)
+- [ ] Project-based conversation organization
+- [ ] Advanced memory visualization and management
+- [ ] Conversation branching and versioning
+- [ ] Multi-language support
+- [ ] Plugin system for custom tools
 
-### Phase 7c: UI Completion and Polish 🔄 IN PROGRESS
-- [ ] Add message controls (regenerate, edit, delete)
-- [ ] Implement conversation export/import
-- [ ] Complete memory management UI
-- [ ] Complete file manager UI
-- [ ] Add conversation search and filtering
+### Phase 8c: Performance and Scalability 🔄 PLANNED
+- [ ] Database migration from JSON to SQLite
+- [ ] Vector store optimization and indexing
+- [ ] Memory consolidation and cleanup automation
+- [ ] Large conversation history handling
+- [ ] Background processing for heavy operations
 
-### Phase 7d: Security and Privacy 🔄 PLANNED
-- [ ] Implement secure API key storage
-- [ ] Add data export functionality
-- [ ] Implement privacy controls
-- [ ] Add telemetry opt-in system
+### Phase 8d: Security and Privacy 🔄 PLANNED
+- [ ] Encrypted API key storage
+- [ ] Data export functionality
+- [ ] Privacy controls and data deletion
 - [ ] Security audit and penetration testing
-
-### Phase 7e: Packaging and Distribution ✅ MOSTLY COMPLETE
-- [x] Create PyInstaller build scripts
-- [ ] Test cross-platform compatibility
-- [ ] Implement auto-update mechanism
-- [ ] Create installation packages
-- [ ] Set up release process
-
-### Phase 7f: Documentation and Final Polish 🔄 PLANNED
-- [ ] Write comprehensive README
-- [ ] Create user guide and tutorials
-- [ ] Generate API documentation
-- [ ] Add troubleshooting guides
-- [ ] Performance optimization and final testing
+- [ ] Secure communication protocols
 
 ## 🤝 Contributing
 
@@ -173,13 +188,15 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🙏 Acknowledgments
 
-- **PyQt6**: Modern Python GUI framework
-- **LangChain**: LLM orchestration framework
-- **Memori**: Long-term memory system
-- **FAISS/Chroma**: Vector search libraries
-- **Cryptography**: Secure encryption library
+- **PyQt6**: Modern Python GUI framework with WebEngine integration
+- **LangChain**: LLM orchestration framework with extensive provider support
+- **Memori**: Advanced long-term memory system for AI conversations
+- **FAISS/Chroma**: High-performance vector search libraries
+- **OpenRouter**: Multi-provider LLM API gateway
+- **Tavily/Exa/Jina**: Web search APIs for current information retrieval
+- **Cryptography**: Secure encryption for future security enhancements
 
 ---
 
-**Status**: v0.2.0 - Production Ready with Core Features
-**Last Updated**: November 2025
+**Status**: v0.3.0 - Feature Complete with Advanced Capabilities
+**Last Updated**: December 2025
