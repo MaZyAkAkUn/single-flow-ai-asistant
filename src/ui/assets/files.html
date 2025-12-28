@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files Manager</title>
+    <link rel="stylesheet" href="files.css">
+    <script src="libs/qwebchannel.js"></script>
+    <script src="files.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h2>Document Library</h2>
+            <div class="actions">
+                <button id="uploadBtn" class="primary-btn" onclick="requestUpload()">
+                    Upload
+                </button>
+            </div>
+        </div>
+
+        <!-- Ingestion Status -->
+        <div id="ingestionStatus" class="status-bar hidden">
+            <div class="progress-container">
+                <div id="progressBar" class="progress-bar"></div>
+            </div>
+            <span id="statusText">Processing...</span>
+        </div>
+
+        <!-- File List -->
+        <div class="file-list-container">
+            <ul id="fileList" class="file-list">
+                <!-- File items will be injected here -->
+                <li class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <p>No documents uploaded yet</p>
+                    <button class="secondary-btn" onclick="requestUpload()">Upload Files</button>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Drag Drop Zone Overlay -->
+        <div id="dropZone" class="drop-zone hidden">
+            <div class="drop-message">
+                <span>⬇️ Drop files here to upload</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden"></div>
+</body>
+</html>

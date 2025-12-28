@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Side Panel</title>
+    <link rel="stylesheet" href="side_panel.css">
+    <script src="libs/qwebchannel.js"></script>
+    <script src="side_panel.js" defer></script>
+</head>
+<body>
+    <div class="main-container">
+        <!-- ID: Global Toast -->
+        <div id="toast" class="hidden">Notification</div>
+
+        <!-- Tab Navigation -->
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="switchMainTab('files')" id="btn-tab-files">
+                Files
+            </button>
+            <button class="tab-btn" onclick="switchMainTab('memory')" id="btn-tab-memory">
+                Memory
+            </button>
+            <button class="tab-btn" onclick="switchMainTab('settings')" id="btn-tab-settings">
+                Settings
+            </button>
+        </div>
+
+        <!-- Files View -->
+        <div id="view-files" class="tab-view active">
+            <div class="view-header">
+                <h2>Document Library</h2>
+                <div class="actions">
+                    <button id="uploadBtn" class="primary-btn" onclick="filesRequestUpload()">
+                        Upload
+                    </button>
+                </div>
+            </div>
+
+            <div id="ingestionStatus" class="status-bar hidden">
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                </div>
+                <span id="statusText">Processing...</span>
+            </div>
+
+            <div class="file-list-container">
+                <ul id="fileList" class="file-list">
+                    <li class="empty-state">
+                        <div class="empty-icon">📂</div>
+                        <p>No documents uploaded yet</p>
+                        <button class="secondary-btn" onclick="filesRequestUpload()">Upload Files</button>
+                    </li>
+                </ul>
+            </div>
+            
+            <div id="dropZone" class="drop-zone hidden">
+                <div class="drop-message">
+                    <span>⬇️ Drop files here to upload</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Memory View -->
+        <div id="view-memory" class="tab-view hidden">
+            <div class="view-header">
+                <h2>Memory Management</h2>
+                <div class="header-status" id="memoryStats">Loading stats...</div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-bar">
+                    <input type="text" id="memSearchInput" placeholder="Search memories..." onkeydown="handleMemSearchKey(event)">
+                    <button class="primary-btn" onclick="memoryRequestSearch()">Search</button>
+                </div>
+                
+                <div class="filters">
+                    <select id="memTypeFilter">
+                        <option value="All">All Types</option>
+                        <option value="conversation">Conversation</option>
+                        <option value="semantic">Semantic</option>
+                        <option value="episodic">Episodic</option>
+                        <option value="procedural">Procedural</option>
+                    </select>
+                    
+                    <select id="memImportanceFilter">
+                        <option value="All">All Importance</option>
+                        <option value="low">Low</option>
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                    
+                    <input type="text" id="memTagsFilter" placeholder="Tags (comma separated)">
+                    
+                    <div class="limit-control">
+                        <label>Max:</label>
+                        <input type="number" id="memLimitInput" value="20" min="5" max="100">
+                    </div>
+                </div>
+            </div>
+
+            <div class="split-view">
+                <div class="memory-list-panel">
+                    <div class="panel-header">
+                        <span>Results</span>
+                        <button class="icon-btn refresh-btn" onclick="memoryRequestRefresh()">🔄</button>
+                    </div>
+                    <ul id="memoryList" class="memory-list">
+                        <!-- Items injected here -->
+                    </ul>
+                </div>
+                
+                <div class="memory-detail-panel">
+                    <div id="memEmptyDetail" class="detail-placeholder">
+                        <div class="empty-icon">🧠</div>
+                        <p>Select a memory to view details or add a new fact.</p>
+                        <button class="primary-btn" onclick="memoryShowAddFact()">Add New Fact</button>
+                    </div>
+
+                    <div id="memDetailView" class="detail-content hidden">
+                        <div class="detail-header">
+                            <h3>Memory Details</h3>
+                            <div class="detail-actions">
+                                <button class="secondary-btn" onclick="memoryShowAddFact()">New</button>
+                                <button class="primary-btn" onclick="memorySave()">Save</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Content</label>
+                            <textarea id="memContent" rows="6"></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group half">
+                                <label>Type</label>
+                                <select id="memType">
+                                    <option value="conversation">Conversation</option>
+                                    <option value="semantic">Semantic</option>
+                                    <option value="episodic">Episodic</option>
+                                    <option value="procedural">Procedural</option>
+                                </select>
+                            </div>
+                            <div class="form-group half">
+                                <label>Importance</label>
+                                <select id="memImportance">
+                                    <option value="low">Low</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="critical">Critical</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tags</label>
+                            <input type="text" id="memTags" placeholder="tag1, tag2">
+                        </div>
+                        
+                        <div class="metadata-info" id="memMetadata">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="footer-actions">
+                    <button class="secondary-btn" onclick="memoryRequestImport()">Import</button>
+                    <button class="secondary-btn" onclick="memoryRequestExport()">Export</button>
+                    <button class="danger-btn" onclick="memoryRequestClear()">Clear All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div id="view-settings" class="tab-view hidden">
+            <div class="settings-container">
+                <div class="settings-sidebar">
+                    <ul class="nav-links">
+                        <li class="active" onclick="settingsSwitchTab('api')" id="nav-api">API Keys</li>
+                        <li onclick="settingsSwitchTab('combos')" id="nav-combos">Combos</li>
+                        <li onclick="settingsSwitchTab('llm')" id="nav-llm">LLM & Embeddings</li>
+                        <li onclick="settingsSwitchTab('tools')" id="nav-tools">Tools & Retrieval</li>
+                        <li onclick="settingsSwitchTab('audio')" id="nav-audio">Audio & Voice</li>
+                        <li onclick="settingsSwitchTab('app')" id="nav-app">Application</li>
+                    </ul>
+                    <div class="sidebar-footer">
+                        <button id="save-btn" class="primary-btn" onclick="settingsSave()">Save Settings</button>
+                        <button id="reset-btn" class="secondary-btn" onclick="settingsReset()">Reset Defaults</button>
+                    </div>
+                </div>
+
+                <div class="settings-content">
+                    <!-- API Configuration Tab -->
+                    <div id="tab-api" class="settings-tab-content active">
+                        <h3>API Configuration</h3>
+
+                        <div class="form-group">
+                            <label for="openrouter-key">OpenRouter API Key</label>
+                            <div class="input-group">
+                                <input type="password" id="openrouter-key" placeholder="sk-or-...">
+                                <button class="icon-btn toggle-visibility" onclick="toggleVisibility('openrouter-key')">👁️</button>
+                            </div>
+                            <button class="test-btn" onclick="settingsTestConnection()">Test Connection</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="openai-key">OpenAI API Key</label>
+                            <div class="input-group">
+                                <input type="password" id="openai-key" placeholder="sk-...">
+                                <button class="icon-btn toggle-visibility" onclick="toggleVisibility('openai-key')">👁️</button>
+                            </div>
+                        </div>
+
+                        <h4>Tool API Keys</h4>
+                        <div class="subsettings">
+                            <div class="form-group">
+                                <label for="tavily-key">Tavily Search</label>
+                                <div class="input-group">
+                                    <input type="password" id="tavily-key" placeholder="tvly-...">
+                                    <button class="icon-btn toggle-visibility" onclick="toggleVisibility('tavily-key')">👁️</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="exa-key">Exa Search</label>
+                                <div class="input-group">
+                                    <input type="password" id="exa-key">
+                                    <button class="icon-btn toggle-visibility" onclick="toggleVisibility('exa-key')">👁️</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="jina-key">Jina Search</label>
+                                <div class="input-group">
+                                    <input type="password" id="jina-key">
+                                    <button class="icon-btn toggle-visibility" onclick="toggleVisibility('jina-key')">👁️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combos Tab -->
+                    <div id="tab-combos" class="settings-tab-content">
+                        <h3>Provider/Model Combos</h3>
+                        <p class="hint">Create and manage combinations of providers and models that can be reused across different use cases.</p>
+
+                        <div class="combos-container">
+                            <div class="combo-form">
+                                <h4>Create New Combo</h4>
+                                <div class="form-group">
+                                    <label for="combo-name">Combo Name</label>
+                                    <input type="text" id="combo-name" placeholder="e.g., Fast GPT-4">
+                                </div>
+                                <div class="form-group">
+                                    <label for="combo-provider">Provider</label>
+                                    <select id="combo-provider">
+                                        <option value="openrouter">OpenRouter</option>
+                                        <option value="openai">OpenAI</option>
+                                        <option value="ollama">Ollama</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="combo-model">Model</label>
+                                    <input type="text" id="combo-model" placeholder="e.g., openai/gpt-4o">
+                                </div>
+                                <button class="primary-btn" onclick="settingsCreateCombo()">Create Combo</button>
+                            </div>
+
+                            <div class="combos-list">
+                                <h4>Existing Combos</h4>
+                                <div id="combos-list" class="combos-items">
+                                    <!-- Populated by JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- LLM & Embeddings Tab -->
+                    <div id="tab-llm" class="settings-tab-content">
+                        <h3>Main Chat Configuration</h3>
+
+                        <div class="form-group">
+                            <label for="llm-combo">Model Combo</label>
+                            <select id="llm-combo">
+                                <!-- Populated by JS -->
+                            </select>
+                            <small class="hint">Select a provider/model combination for main chat.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="llm-temperature">Temperature: <span id="temp-value">0.7</span></label>
+                            <input type="range" id="llm-temperature" min="0" max="2" step="0.1" value="0.7" oninput="document.getElementById('temp-value').textContent = this.value">
+                        </div>
+
+                        <h3>Embeddings Configuration</h3>
+                        <div class="form-group">
+                            <label for="emb-combo">Model Combo</label>
+                            <select id="emb-combo">
+                                <!-- Populated by JS -->
+                            </select>
+                            <small class="hint">Select a provider/model combination for embeddings.</small>
+                        </div>
+
+                        <h3>Intent Analysis</h3>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="intent-enabled" onchange="settingsToggleIntentSettings()">
+                            <label for="intent-enabled">Use separate model for intent analysis</label>
+                        </div>
+
+                        <div id="intent-settings" class="subsettings disabled">
+                            <div class="form-group">
+                                <label for="intent-combo">Model Combo</label>
+                                <select id="intent-combo">
+                                     <!-- Populated by JS -->
+                                </select>
+                                <small class="hint">Select a provider/model combination for intent analysis.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Retrieval Tab -->
+                    <div id="tab-tools" class="settings-tab-content">
+                        <h3>Document Retrieval (RAG)</h3>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="rag-enabled" onchange="settingsToggleRagSettings()">
+                            <label for="rag-enabled">Enable document retrieval in responses</label>
+                        </div>
+
+                        <div id="rag-settings" class="subsettings">
+                            <div class="form-group">
+                                <label for="rag-max-docs">Max documents per query</label>
+                                <input type="number" id="rag-max-docs" min="1" max="20" value="3">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rag-method">Retrieval method</label>
+                                <select id="rag-method" onchange="settingsToggleHybridWeights()">
+                                    <option value="semantic">Semantic</option>
+                                    <option value="hybrid">Hybrid (Semantic + Keyword)</option>
+                                </select>
+                            </div>
+
+                            <div id="hybrid-weights" class="hidden">
+                                <div class="form-group">
+                                    <label>Semantic Weight: <span id="sem-weight-val">70</span>%</label>
+                                    <input type="range" id="sem-weight" min="0" max="100" value="70" step="10" oninput="settingsUpdateWeights('sem')">
+                                </div>
+                                <div class="form-group">
+                                    <label>Keyword Weight: <span id="key-weight-val">30</span>%</label>
+                                    <input type="range" id="key-weight" min="0" max="100" value="30" step="10" oninput="settingsUpdateWeights('key')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Vector Store</h3>
+                        <div class="form-group">
+                            <label for="vector-provider">Provider</label>
+                            <select id="vector-provider">
+                                <option value="faiss">FAISS (Local)</option>
+                                <option value="chroma">ChromaDB</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="vector-path">Store Path</label>
+                            <input type="text" id="vector-path" value="./data/vector_store">
+                        </div>
+                    </div>
+
+                    <!-- Audio & Voice Tab -->
+                    <div id="tab-audio" class="settings-tab-content">
+                        <h3>Text-to-Speech (TTS)</h3>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="tts-enabled" onchange="settingsToggleTtsSettings()">
+                            <label for="tts-enabled">Enable Text-to-Speech</label>
+                        </div>
+
+                        <div id="tts-settings" class="subsettings">
+                            <div class="form-group">
+                                <label for="tts-voice">Voice</label>
+                                <select id="tts-voice">
+                                    <!-- Populated by JS -->
+                                    <option value="alloy">Alloy</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="tts-speed">Speed: <span id="tts-speed-val">1.0</span>x</label>
+                                <input type="range" id="tts-speed" min="0.5" max="2.0" step="0.1" value="1.0" oninput="document.getElementById('tts-speed-val').textContent = this.value">
+                            </div>
+                        </div>
+
+                        <h3>Speech-to-Text (ASR)</h3>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="asr-enabled">
+                            <label for="asr-enabled">Enable Speech-to-Text</label>
+                        </div>
+                        <div class="form-group">
+                            <label for="asr-language">Language</label>
+                            <select id="asr-language">
+                                <option value="en-US">English (US)</option>
+                                <option value="en-GB">English (UK)</option>
+                                <option value="es-ES">Spanish</option>
+                                <option value="fr-FR">French</option>
+                                <option value="de-DE">German</option>
+                                <option value="it-IT">Italian</option>
+                                <option value="pt-BR">Portuguese</option>
+                                <option value="ja-JP">Japanese</option>
+                                <option value="ko-KR">Korean</option>
+                                <option value="zh-CN">Chinese (Mandarin)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Application Tab -->
+                    <div id="tab-app" class="settings-tab-content">
+                        <h3>Application Settings</h3>
+                        <div class="form-group">
+                            <label for="app-history">Max Conversation History (messages)</label>
+                            <input type="number" id="app-history" min="10" max="1000" value="50" step="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="app-theme">Theme</label>
+                            <select id="app-theme">
+                                <option value="light">Light</option>
+                                <option value="dark" selected>Dark</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

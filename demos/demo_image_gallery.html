@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Image Gallery Demo</title>
+    <link rel="stylesheet" href="src/ui/assets/style.css">
+</head>
+<body>
+    <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+        <h1 style="color: #d4d4d4;">Image Gallery Demo</h1>
+
+        <div class="message assistant">
+            <div class="message-header">
+                <span class="role-name">Assistant</span>
+                <span class="timestamp">14:30:00</span>
+            </div>
+
+            <div class="content">
+                <p>Here's what I found about the latest AI developments:</p>
+
+                <!-- Test different thumbnail sizes -->
+                <div style="margin: 10px 0; padding: 10px; background: #252526; border-radius: 6px;">
+                    <label style="color: #d4d4d4; margin-right: 10px;">Thumbnail Size:</label>
+                    <button onclick="setGalleryThumbnailSize(100)" style="margin: 0 5px; padding: 4px 8px;">Small (100px)</button>
+                    <button onclick="setGalleryThumbnailSize(150)" style="margin: 0 5px; padding: 4px 8px;">Medium (150px)</button>
+                    <button onclick="setGalleryThumbnailSize(200)" style="margin: 0 5px; padding: 4px 8px;">Large (200px)</button>
+                    <button onclick="resetGallerySettings()" style="margin: 0 5px; padding: 4px 8px;">Reset</button>
+                    <span id="current-size" style="color: #888; margin-left: 10px;"></span>
+                </div>
+
+                <div class="image-gallery">
+                    <div class="gallery-header">
+                        <span class="gallery-title">Image Gallery</span>
+                        <span class="gallery-count">(5 images)</span>
+                    </div>
+                    <div class="gallery-grid">
+                        <div class="gallery-image" onclick="openImageModal('https://via.placeholder.com/400x300/007acc/ffffff?text=AI+Development+1')">
+                            <img src="https://via.placeholder.com/400x300/007acc/ffffff?text=AI+Development+1" alt="AI Development 1" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                        <div class="gallery-image" onclick="openImageModal('https://via.placeholder.com/400x300/4caf50/ffffff?text=AI+Development+2')">
+                            <img src="https://via.placeholder.com/400x300/4caf50/ffffff?text=AI+Development+2" alt="AI Development 2" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                        <div class="gallery-image" onclick="openImageModal('https://via.placeholder.com/400x300/e74c3c/ffffff?text=AI+Development+3')">
+                            <img src="https://via.placeholder.com/400x300/e74c3c/ffffff?text=AI+Development+3" alt="AI Development 3" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                        <div class="gallery-image" onclick="openImageModal('https://via.placeholder.com/400x300/9b59b6/ffffff?text=AI+Development+4')">
+                            <img src="https://via.placeholder.com/400x300/9b59b6/ffffff?text=AI+Development+4" alt="AI Development 4" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                        <div class="gallery-image" onclick="openImageModal('https://via.placeholder.com/400x300/f39c12/ffffff?text=AI+Development+5')">
+                            <img src="https://via.placeholder.com/400x300/f39c12/ffffff?text=AI+Development+5" alt="AI Development 5" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                        <!-- Test error case -->
+                        <div class="gallery-image" onclick="openImageModal('invalid-url')">
+                            <img src="invalid-url" alt="Invalid Image" loading="lazy" onerror="handleImageError(this)" onload="handleImageLoad(this)">
+                            <div class="image-loading">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>The field of artificial intelligence continues to evolve rapidly with new breakthroughs in machine learning, natural language processing, and computer vision.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/ui/assets/script.js"></script>
+    <script>
+        // Update current size display
+        function updateSizeDisplay() {
+            const size = getGalleryThumbnailSize();
+            document.getElementById('current-size').textContent = `Current: ${size}px`;
+        }
+
+        // Initialize size display
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSizeDisplay();
+
+            // Update display when size changes
+            const originalSetSize = setGalleryThumbnailSize;
+            window.setGalleryThumbnailSize = function(size) {
+                originalSetSize(size);
+                setTimeout(updateSizeDisplay, 10);
+            };
+
+            const originalReset = resetGallerySettings;
+            window.resetGallerySettings = function() {
+                originalReset();
+                setTimeout(updateSizeDisplay, 10);
+            };
+        });
+    </script>
+</body>
+</html>

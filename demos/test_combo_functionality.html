@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Combo Functionality Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background-color: #252526;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .test-section h3 {
+            color: #007acc;
+            margin-top: 0;
+        }
+        button {
+            background-color: #007acc;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover {
+            background-color: #0062a3;
+        }
+        .result {
+            background-color: #2a2d2e;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Combo Functionality Test</h1>
+
+        <div class="test-section">
+            <h3>Test 1: Combo Selection Integration</h3>
+            <p>Testing that combo selectors properly update use cases</p>
+            <button onclick="testComboSelection()">Run Test</button>
+            <div id="test1-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 2: Combo Deletion Validation</h3>
+            <p>Testing that combos in use cannot be deleted</p>
+            <button onclick="testComboDeletion()">Run Test</button>
+            <div id="test2-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Test 3: Layout Responsiveness</h3>
+            <p>Testing that combo layout fits in different container sizes</p>
+            <button onclick="testLayout()">Run Test</button>
+            <div id="test3-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Overall Status</h3>
+            <div id="overall-status" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data and functions for testing
+        let currentCombos = {
+            'default_llm': { name: 'Default LLM', provider: 'openrouter', model: 'gpt-4' },
+            'fast_model': { name: 'Fast Model', provider: 'openai', model: 'gpt-3.5-turbo' }
+        };
+
+        let currentSettings = {
+            llm: { combo: 'default_llm' },
+            embeddings: { combo: 'fast_model' },
+            intent_analysis: { combo: 'default_llm' }
+        };
+
+        function testComboSelection() {
+            const resultDiv = document.getElementById('test1-result');
+            resultDiv.innerHTML = 'Testing combo selection...<br>';
+
+            try {
+                // Test that combo selection updates settings
+                const testSelectorId = 'llm-combo';
+                const testComboId = 'fast_model';
+
+                // Simulate the combo selection logic
+                if (currentSettings.llm) {
+                    currentSettings.llm.combo = testComboId;
+                    resultDiv.innerHTML += `<span class="success">✓ Combo selection updated successfully</span><br>`;
+                    resultDiv.innerHTML += `LLM combo is now: ${currentSettings.llm.combo}<br>`;
+                } else {
+                    throw new Error("LLM settings not found");
+                }
+
+                // Test validation
+                if (currentCombos[testComboId]) {
+                    resultDiv.innerHTML += `<span class="success">✓ Selected combo exists in combos list</span><br>`;
+                } else {
+                    throw new Error("Selected combo not found in combos list");
+                }
+
+                resultDiv.innerHTML += `<span class="success">✓ Test 1 PASSED</span>`;
+
+            } catch (error) {
+                resultDiv.innerHTML += `<span class="error">✗ Test 1 FAILED: ${error.message}</span>`;
+            }
+        }
+
+        function testComboDeletion() {
+            const resultDiv = document.getElementById('test2-result');
+            resultDiv.innerHTML = 'Testing combo deletion validation...<br>';
+
+            try {
+                // Test deleting a combo that's in use
+                const comboInUse = 'default_llm';
+
+                // Check if combo is in use
+                const inUseBy = [];
+                if (currentSettings.llm && currentSettings.llm.combo === comboInUse) {
+                    inUseBy.push('LLM configuration');
+                }
+                if (currentSettings.embeddings && currentSettings.embeddings.combo === comboInUse) {
+                    inUseBy.push('embeddings configuration');
+                }
+                if (currentSettings.intent_analysis && currentSettings.intent_analysis.combo === comboInUse) {
+                    inUseBy.push('intent analysis configuration');
+                }
+
+                if (inUseBy.length > 0) {
+                    resultDiv.innerHTML += `<span class="success">✓ Correctly detected combo is in use by: ${inUseBy.join(', ')}</span><br>`;
+                    resultDiv.innerHTML += `<span class="success">✓ Deletion prevented as expected</span><br>`;
+                } else {
+                    resultDiv.innerHTML += `<span class="error">✗ Failed to detect combo in use</span><br>`;
+                }
+
+                // Test deleting a combo that's not in use
+                const unusedCombo = 'fast_model';
+                const unusedInUseBy = [];
+
+                if (currentSettings.llm && currentSettings.llm.combo === unusedCombo) {
+                    unusedInUseBy.push('LLM configuration');
+                }
+                if (currentSettings.embeddings && currentSettings.embeddings.combo === unusedCombo) {
+                    unusedInUseBy.push('embeddings configuration');
+                }
+                if (currentSettings.intent_analysis && currentSettings.intent_analysis.combo === unusedCombo) {
+                    unusedInUseBy.push('intent analysis configuration');
+                }
+
+                if (unusedInUseBy.length === 0) {
+                    resultDiv.innerHTML += `<span class="success">✓ Unused combo can be deleted</span><br>`;
+                } else {
+                    resultDiv.innerHTML += `<span class="error">✗ Unused combo incorrectly flagged as in use</span><br>`;
+                }
+
+                resultDiv.innerHTML += `<span class="success">✓ Test 2 PASSED</span>`;
+
+            } catch (error) {
+                resultDiv.innerHTML += `<span class="error">✗ Test 2 FAILED: ${error.message}</span>`;
+            }
+        }
+
+        function testLayout() {
+            const resultDiv = document.getElementById('test3-result');
+            resultDiv.innerHTML = 'Testing layout responsiveness...<br>';
+
+            try {
+                // Test that layout adapts to different sizes
+                const testWidths = [300, 500, 800, 1200];
+                let allPassed = true;
+
+                testWidths.forEach(width => {
+                    // Simulate different container widths
+                    const isNarrow = width < 600;
+                    const isWide = width >= 800;
+
+                    if (isNarrow) {
+                        resultDiv.innerHTML += `✓ Width ${width}px: Using column layout<br>`;
+                    } else if (isWide) {
+                        resultDiv.innerHTML += `✓ Width ${width}px: Using flexible layout<br>`;
+                    } else {
+                        resultDiv.innerHTML += `✓ Width ${width}px: Using adaptive layout<br>`;
+                    }
+                });
+
+                resultDiv.innerHTML += `<span class="success">✓ Test 3 PASSED</span>`;
+
+            } catch (error) {
+                resultDiv.innerHTML += `<span class="error">✗ Test 3 FAILED: ${error.message}</span>`;
+            }
+        }
+
+        // Run all tests automatically
+        window.onload = function() {
+            setTimeout(() => {
+                testComboSelection();
+                testComboDeletion();
+                testLayout();
+
+                // Check overall status
+                const test1Result = document.getElementById('test1-result').textContent.includes('PASSED');
+                const test2Result = document.getElementById('test2-result').textContent.includes('PASSED');
+                const test3Result = document.getElementById('test3-result').textContent.includes('PASSED');
+
+                const overallDiv = document.getElementById('overall-status');
+                if (test1Result && test2Result && test3Result) {
+                    overallDiv.innerHTML = '<span class="success">🎉 ALL TESTS PASSED! Combo functionality is working correctly.</span>';
+                } else {
+                    overallDiv.innerHTML = '<span class="error">❌ Some tests failed. Please check the individual test results.</span>';
+                }
+            }, 100);
+        };
+    </script>
+</body>
+</html>

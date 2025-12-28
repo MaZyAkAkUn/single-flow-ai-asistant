@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Manager</title>
+    <link rel="stylesheet" href="files.css"> <!-- Reusing files.css for base layout -->
+    <link rel="stylesheet" href="memory.css">
+    <script src="libs/qwebchannel.js"></script>
+    <script src="memory.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h2>Memory Management</h2>
+            <div class="header-status" id="memoryStats">Loading stats...</div>
+        </div>
+
+        <!-- Toolbar / Search -->
+        <div class="toolbar">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search memories..." onkeydown="handleSearchKey(event)">
+                <button class="primary-btn" onclick="requestSearch()">Search</button>
+            </div>
+            
+            <div class="filters">
+                <select id="typeFilter">
+                    <option value="All">All Types</option>
+                    <option value="conversation">Conversation</option>
+                    <option value="semantic">Semantic</option>
+                    <option value="episodic">Episodic</option>
+                    <option value="procedural">Procedural</option>
+                </select>
+                
+                <select id="importanceFilter">
+                    <option value="All">All Importance</option>
+                    <option value="low">Low</option>
+                    <option value="normal">Normal</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                </select>
+                
+                <input type="text" id="tagsFilter" placeholder="Tags (comma separated)">
+                
+                <div class="limit-control">
+                    <label>Max:</label>
+                    <input type="number" id="limitInput" value="20" min="5" max="100">
+                </div>
+            </div>
+        </div>
+
+        <!-- Split View -->
+        <div class="split-view">
+            <!-- Sidebar: List -->
+            <div class="memory-list-panel">
+                <div class="panel-header">
+                    <span>Results</span>
+                    <button class="icon-btn refresh-btn" onclick="requestRefresh()">🔄</button>
+                </div>
+                <ul id="memoryList" class="memory-list">
+                    <!-- Items injected here -->
+                </ul>
+            </div>
+            
+            <!-- Main: Details/Edit -->
+            <div class="memory-detail-panel">
+                <div id="emptyDetail" class="detail-placeholder">
+                    <div class="empty-icon">🧠</div>
+                    <p>Select a memory to view details or add a new fact.</p>
+                    <button class="primary-btn" onclick="showAddFact()">Add New Fact</button>
+                </div>
+
+                <div id="detailView" class="detail-content hidden">
+                    <div class="detail-header">
+                        <h3>Memory Details</h3>
+                        <div class="detail-actions">
+                            <button class="secondary-btn" onclick="showAddFact()">New</button>
+                            <button class="primary-btn" onclick="saveMemory()">Save</button>
+                            <!-- <button class="danger-btn" onclick="deleteMemory()">Delete</button> -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea id="memContent" rows="6"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label>Type</label>
+                            <select id="memType">
+                                <option value="conversation">Conversation</option>
+                                <option value="semantic">Semantic</option>
+                                <option value="episodic">Episodic</option>
+                                <option value="procedural">Procedural</option>
+                            </select>
+                        </div>
+                        <div class="form-group half">
+                            <label>Importance</label>
+                            <select id="memImportance">
+                                <option value="low">Low</option>
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" id="memTags" placeholder="tag1, tag2">
+                    </div>
+                    
+                    <div class="metadata-info" id="memMetadata">
+                        <!-- Created at, score, etc -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Actions -->
+        <div class="footer">
+            <div class="checkbox-group">
+                <input type="checkbox" id="memoryEnabled" onchange="toggleMemory(this.checked)">
+                <label for="memoryEnabled">Enable Memory</label>
+            </div>
+            <div class="footer-actions">
+                <button class="secondary-btn" onclick="requestImport()">Import</button>
+                <button class="secondary-btn" onclick="requestExport()">Export</button>
+                <button class="danger-btn" onclick="requestClear()">Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden"></div>
+</body>
+</html>

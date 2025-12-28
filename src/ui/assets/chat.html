@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Interface</title>
+    <!-- Highlight.js Theme (Atom One Dark) -->
+    <link rel="stylesheet" href="libs/atom-one-dark.min.css">
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="libs/katex.min.css">
+    <!-- Texmath CSS -->
+    <link rel="stylesheet" href="libs/texmath.css">
+    <!-- Local Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main Chat Area -->
+    <div id="chat-container"></div>
+    
+    <!-- Status / Process Indicator Overlay -->
+    <div id="process-indicator" class="hidden">
+        <div class="process-content">
+            <span id="process-icon"></span>
+            <span id="process-text">Processing...</span>
+            <div id="process-anim" class="anim-container"></div>
+        </div>
+    </div>
+
+    <!-- Input Area (Fixed Bottom) -->
+    <div id="input-area">
+        <div class="input-container">
+            <!-- Audio Controls -->
+            <button id="voice-btn" class="icon-button" title="Voice Input" onclick="toggleVoiceInput()">
+                <div class="mic-icon">🎙️</div>
+                <div class="recording-indicator hidden"></div>
+            </button>
+            <button id="settings-btn" class="icon-button" title="Audio Settings" onclick="openAudioSettings()">
+                ⚙️
+            </button>
+
+            <!-- Combo Selector -->
+            <div class="combo-selector-wrapper">
+                <select id="combo-selector" class="combo-selector" title="Select AI Model Combo">
+                    <option value="">Loading combos...</option>
+                </select>
+            </div>
+
+            <!-- Text Input -->
+            <div class="text-input-wrapper">
+                <textarea id="message-input" placeholder="Type your message here..." rows="1"></textarea>
+            </div>
+
+            <!-- Send Button -->
+            <button id="send-btn" class="send-button" onclick="sendMessage()">
+                Send
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- QWebChannel -->
+    <script src="libs/qwebchannel.js"></script>
+    <!-- Markdown-it -->
+    <script src="libs/markdown-it.min.js"></script>
+    <!-- Highlight.js -->
+    <script src="libs/highlight.min.js"></script>
+    <!-- KaTeX -->
+    <script src="libs/katex.min.js"></script>
+    <!-- Markdown-it Texmath -->
+    <script src="libs/texmath.min.js"></script>
+    
+    <!-- Local Logic -->
+    <script src="script.js"></script>
+</body>
+</html>

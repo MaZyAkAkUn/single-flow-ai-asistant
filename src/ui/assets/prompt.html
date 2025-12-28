@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Inspector</title>
+    <link rel="stylesheet" href="files.css"> <!-- Reusing files.css for base layout -->
+    <link rel="stylesheet" href="prompt.css">
+    <script src="libs/qwebchannel.js"></script>
+    <script src="prompt.js" defer></script>
+</head>
+<body>
+    <div class="container vertical">
+        <!-- Top Half: Current Prompt -->
+        <div class="current-prompt-panel">
+            <div class="header">
+                <h2>🎯 Current Prompt</h2>
+                <div class="actions">
+                    <button class="secondary-btn small" onclick="requestEdit()">Edit System Prompt</button>
+                    <!-- <button class="icon-btn small" onclick="toggleViewMode()">Raw/Parsed</button> -->
+                </div>
+            </div>
+            
+            <div class="prompt-content-area" id="promptContainer">
+                <div class="empty-state small">
+                    <p>No prompt generated yet</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Splitter Handle (simulated with CSS for now) -->
+        <div class="splitter-handle"></div>
+
+        <!-- Bottom Half: History -->
+        <div class="history-panel">
+            <div class="panel-header">
+                <span>📜 History</span>
+                <span class="history-count" id="historyCount">0</span>
+            </div>
+            <ul id="historyList" class="history-list">
+                <!-- History Items -->
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

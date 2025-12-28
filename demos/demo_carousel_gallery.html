@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Carousel Gallery Demo</title>
+    <link rel="stylesheet" href="src/ui/assets/style.css">
+</head>
+<body style="background: #1e1e1e; padding: 20px;">
+    <h1 style="color: #d4d4d4; text-align: center;">Interactive Carousel Gallery Demo</h1>
+
+    <div style="max-width: 800px; margin: 0 auto;">
+        <p style="color: #d4d4d4; text-align: center; margin-bottom: 30px;">
+            This demo shows the new rotating carousel gallery with thumbnail navigation.
+            Use arrow keys or click thumbnails to navigate!
+        </p>
+
+        <!-- Demo Carousel Gallery -->
+        <div class="image-gallery carousel-gallery auto-gallery">
+            <div class="gallery-header">
+                <span class="gallery-title">Demo Gallery</span>
+                <span class="gallery-counter">1 / 3</span>
+            </div>
+
+            <div class="gallery-main-image">
+                <div class="gallery-nav-controls">
+                    <button class="gallery-nav-btn prev-btn" onclick="navigateGalleryDemo(-1)">‹</button>
+                    <button class="gallery-nav-btn next-btn" onclick="navigateGalleryDemo(1)">›</button>
+                </div>
+                <div class="gallery-main-container">
+                    <img src="src/ui/assets/images/test_image.jpg" alt="Demo Image 1" class="gallery-main-img">
+                    <div class="image-loading main-loading" style="display: none;">Loading...</div>
+                </div>
+            </div>
+
+            <div class="gallery-thumbnails">
+                <div class="gallery-thumb-container active" onclick="setGalleryImageDemo(0)">
+                    <img src="src/ui/assets/images/test_image.jpg" alt="Thumb 1">
+                    <div class="image-loading thumb-loading" style="display: none;">Loading...</div>
+                </div>
+                <div class="gallery-thumb-container" onclick="setGalleryImageDemo(1)">
+                    <img src="https://via.placeholder.com/200x150/007acc/ffffff?text=Image+2" alt="Thumb 2">
+                    <div class="image-loading thumb-loading" style="display: none;">Loading...</div>
+                </div>
+                <div class="gallery-thumb-container" onclick="setGalleryImageDemo(2)">
+                    <img src="https://via.placeholder.com/200x150/4caf50/ffffff?text=Image+3" alt="Thumb 3">
+                    <div class="image-loading thumb-loading" style="display: none;">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="color: #888; margin-top: 20px; text-align: center;">
+            <p><strong>Features:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>← → arrow keys for navigation</li>
+                <li>Click thumbnails to jump to specific image</li>
+                <li>Previous/Next arrow buttons</li>
+                <li>Home/End keys to go to first/last image</li>
+                <li>Visual indicator shows current image</li>
+                <li>Smooth scrolling thumbnail strip</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Demo gallery data
+        const demoImages = [
+            { src: 'src/ui/assets/images/test_image.jpg', alt: 'Demo Image 1' },
+            { src: 'https://via.placeholder.com/400x300/007acc/ffffff?text=Image+2', alt: 'Demo Image 2' },
+            { src: 'https://via.placeholder.com/400x300/4caf50/ffffff?text=Image+3', alt: 'Demo Image 3' }
+        ];
+
+        let currentDemoIndex = 0;
+
+        function navigateGalleryDemo(direction) {
+            const newIndex = Math.max(0, Math.min(demoImages.length - 1, currentDemoIndex + direction));
+            setGalleryImageDemo(newIndex);
+        }
+
+        function setGalleryImageDemo(index) {
+            currentDemoIndex = index;
+
+            // Update counter
+            document.querySelector('.gallery-counter').textContent = `${index + 1} / ${demoImages.length}`;
+
+            // Update main image
+            const mainImg = document.querySelector('.gallery-main-img');
+            mainImg.src = demoImages[index].src;
+            mainImg.alt = demoImages[index].alt;
+
+            // Update thumbnail active state
+            const thumbnails = document.querySelectorAll('.gallery-thumb-container');
+            thumbnails.forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+
+            // Scroll thumbnail into view
+            const activeThumb = document.querySelector('.gallery-thumb-container.active');
+            if (activeThumb) {
+                activeThumb.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'nearest',
+                    inline: 'center'
+                });
+            }
+        }
+
+        // Add keyboard navigation to the demo
+        document.addEventListener('keydown', function(e) {
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    navigateGalleryDemo(-1);
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    navigateGalleryDemo(1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    setGalleryImageDemo(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    setGalleryImageDemo(demoImages.length - 1);
+                    break;
+            }
+        });
+
+        // Focus the gallery for keyboard navigation
+        document.querySelector('.image-gallery').focus();
+    </script>
+</body>
+</html>
